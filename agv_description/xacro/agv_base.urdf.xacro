@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<robot name="agv" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- PROPERTY LIST -->
+    <xacro:property name="M_PI" value="3.1415926"/>
+    <xacro:property name="base_length" value="2"/>
+    <xacro:property name="base_width" value="4"/>
+    <xacro:property name="base_height" value="0.25"/>
+
+    <xacro:property name="wheel_joint_damping" value="1.0" />
+    <xacro:property name="wheel_joint_friction" value="1.0" />
+    <xacro:property name="wheel_joint_effort_limit" value="1000.0" />
+    <xacro:property name="wheel_joint_velocity_limit" value="2000.0" />
+    <xacro:property name="wheel_mechanical_reduction" value="1.0" />
+
+    <xacro:property name="steer_joint_damping" value="2.0" />
+    <xacro:property name="steer_joint_friction" value="1.0" />
+    <xacro:property name="steer_joint_effort_limit" value="100.0" />
+    <xacro:property name="steer_joint_velocity_limit" value="100.0" />
+
+    <!-- Defining the colors used in this robot -->
+    <material name="yellow">
+        <color rgba="1 0.4 0 1"/>
+    </material>
+    <material name="black">
+        <color rgba="0 0 0 0.95"/>
+    </material>
+    <material name="gray">
+        <color rgba="0.75 0.75 0.75 1"/>
+    </material>
+
+    <!-- Macro for whell -->
+    <xacro:macro name="wheel" params="prefix x y z">
+
+        <link name="${prefix}_motor_wheel_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
+                </geometry>
+                <material name="gray" />
+            </visual>
+        </link>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" /> 
+            <geometry>
+	            <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="10" />
+            <origin xyz="0 0 0" />
+            <inertia  ixx="0.01" ixy="0.0"  ixz="0.0"  iyy="0.01"  iyz="0.0"  izz="0.01" />    
+        </inertial>
+
+        <joint name="${prefix}_motor_wheel_joint" type="continuous">
+            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+            <parent link="base_link"/>
+            <child link="${prefix}_motor_wheel_link"/>
+            <axis xyz="0 0 1"/>    
+            <limit effort="${steer_joint_effort_limit}" velocity="${steer_joint_velocity_limit}" lower="-1.5708" upper="1.5708"/>
+            <joint_properties damping="${steer_joint_damping}" friction="{steer_joint_friction}"/>
+        </joint>
+
+        <link name="${prefix}_wheel_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://agv_description/meshes/agvs_wheel.dae" scale="1.0 1.0 1.0"/>
+                </geometry>
+                <material name="gray" />
+            </visual>
+        </link>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" /> 
+            <geometry>
+	            <mesh filename="package://agv_description/meshes/agvs_wheel.dae" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1.250" />
+            <origin xyz="0 0 0" />
+            <inertia  ixx="0.0109375" ixy="0.0"  ixz="0.0"  iyy="0.021125"  iyz="0.0"  izz="0.0109375" />
+        </inertial>
+
+        <joint name="${prefix}_wheel_joint" type="continuous">
+            <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+            <parent link="${prefix}_motor_wheel_link"/>
+            <child link="${prefix}_wheel_link"/>
+            <axis xyz="0 1 0"/>
+            <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
+            <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="agv_base">
+        <link name="base_footprint">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="0.001 0.001 0.001" />
+                </geometry>
+            </visual>
+        </link>
+
+        <joint name="base_footprint_joint" type="fixed">
+            <origin xyz="0 0 0.375" rpy="0 0 0" />        
+            <parent link="base_footprint"/>
+            <child link="base_link" />
+        </joint>
+
+        <link name="base_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="${base_length} ${base_width} ${base_height}"/>
+                </geometry>
+                <material name="gray" />
+            </visual>
+        </link>
+
+        <wheel prefix="front_right" x="0.8" y="1.6" z="-0.27"/>
+        <wheel prefix="front_left" x="0.8" y="-1.6" z="-0.27"/>
+        <wheel prefix="back_right" x="-0.8" y="1.6" z="-0.27"/>
+        <wheel prefix="back_left" x="-0.8" y="-1.6" z="-0.27"/>
+
+    </xacro:macro>
+</robot>
