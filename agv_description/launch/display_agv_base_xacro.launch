@@ -1,38 +1,33 @@
 <?xml version="1.0"?>
 <launch>
-	<arg name="model" default="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />
 	<arg name="gui" default="true" />
-
-	<param name="robot_description" command="$(arg model)" />
-
-  	<!-- load the controllers -->
-  	<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-  	  output="screen" ns="/agv" args="--namespace=/agv
-						front_right_wheel_joint
-						front_left_wheel_joint
-						back_right_wheel_joint
-						back_left_wheel_joint
-						front_right_motor_wheel_joint
-						front_left_motor_wheel_joint
-						back_right_motor_wheel_joint
-						back_left_motor_wheel_joint
-						joint_read_state_controller
-  	                    "/>
-
-  	<!-- Load joint controller configurations from YAcd .ML file to parameter server -->
-  	<rosparam file="$(find agv_description)/config/agv_control.yaml" command="load"/>
+	<arg name="debug" default="false"/>
 
     <!-- 设置GUI参数，显示关节控制插件 -->
-	<param name="use_gui" value="$(arg gui)"/>
+	<!-- <param name="use_gui" value="$(arg gui)"/> -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+    	<arg name="debug" value="$(arg debug)" />
+    	<arg name="gui" value="$(arg gui)" />
+    	<arg name="paused" value="false"/>
+    	<arg name="use_sim_time" value="true"/>
+    	<arg name="headless" value="false"/>
+  	</include>
+
+  	<!-- Load the URDF into the ROS Parameter Server -->
+  	<param name="robot_description"
+  	       command="$(find xacro)/xacro.py '$(find agv_description)/xacro/agv.xacro'" />
+
+	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -model agvs -param robot_description -z 0.35"/>
 
     <!-- 运行joint_state_publisher节点，发布机器人的关节状态  -->
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-
-	<!-- 运行robot_state_publisher节点，发布tf  -->
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+	<!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />-->
 
     <!-- 运行rviz可视化界面 -->
-	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find agv_description)/config/agv.rviz" required="true" />
+	<!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find agv_description)/config/agv.rviz" required="true" /> -->
+
+  	<!-- ros_control agvs launch file -->
+  	<include file="$(find agvs_control)/launch/agvs_control.launch" />
 
 </launch>
 
