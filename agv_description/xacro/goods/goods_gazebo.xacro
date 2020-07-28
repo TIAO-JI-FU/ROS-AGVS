@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<robot name="goods" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- PROPERTY LIST -->
+    <xacro:property name="M_PI" value="3.14159265359"/>
+
+    <xacro:macro name="legs" params="prefix x y z">
+        <!-- Create laser reference frame -->
+        <link name="${prefix}_leg_link">
+            <visual>
+                <origin xyz=" 0 0 0 " rpy="0 0 0" />
+                <geometry>
+                    <box size="0.15 0.15 0.15" />
+                </geometry>
+                <material name="black"/>
+            </visual>
+
+            <collision>
+                <origin xyz=" 0 0 0 " rpy="0 0 0" />
+                <geometry>
+                    <box size="0.15 0.15 0.15" />
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.1" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                         iyy="1.0" iyz="0.0"
+                         izz="1.0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}_leg_joint" type="fixed">
+            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+            <parent link="7m_goods_link"/>
+            <child link="${prefix}_leg_link"/>
+        </joint>
+
+        <gazebo reference="${prefix}_leg_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        
+    </xacro:macro>
+
+    <xacro:macro name="pillar" params="prefix x y z">
+        <!-- Create laser reference frame -->
+        <link name="${prefix}_pillar_link">
+            <visual>
+                <origin xyz=" 0 0 0 " rpy="0 0 0" />
+                <geometry>
+                    <cylinder length="0.05" radius="0.1"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+
+            <collision>
+                <origin xyz=" 0 0 0 " rpy="0 0 0" />
+                <geometry>
+                    <cylinder length="0.05" radius="0.1"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.1" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                         iyy="1.0" iyz="0.0"
+                         izz="1.0" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}_pillar_joint" type="fixed">
+            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+            <parent link="7m_goods_link"/>
+            <child link="${prefix}_pillar_link"/>
+        </joint>
+
+        <gazebo reference="${prefix}_pillar_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        
+    </xacro:macro>
+
+    <xacro:macro name="put_7m_goods">
+        <!-- Create laser reference frame -->
+        <link name="7m_goods_link">
+            <visual>
+                <origin xyz=" 0 0 0 " rpy="0 0 0" />
+                <geometry>
+                    <box size="2.5 7 0.1" />
+                </geometry>
+                <material name="gray"/>
+            </visual>
+
+            <collision>
+                <origin xyz=" 0 0 0 " rpy="0 0 0" />
+                <geometry>
+                    <box size="2.5 7 0.1" />
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.1" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                         iyy="1.0" iyz="0.0"
+                         izz="1.0" />
+            </inertial>
+        </link>
+
+        <gazebo reference="7m_goods_link">
+            <material>Gazebo/Gray</material>
+        </gazebo>
+
+        <legs prefix="front_right" x=" 1.175"  y=" 2.925" z="-0.125"/>
+        <legs prefix="front_left"  x=" 1.175"  y="-2.925" z="-0.125"/>
+        <legs prefix="back_right"  x="-1.175"  y=" 2.925" z="-0.125"/>
+        <legs prefix="back_left"   x="-1.175"  y="-2.925" z="-0.125"/>
+        <legs prefix="front_right_2" x=" 1.175"  y=" 2.425" z="-0.125"/>
+        <legs prefix="front_left_2"  x=" 1.175"  y="-2.425" z="-0.125"/>
+        <legs prefix="back_right_2"  x="-1.175"  y=" 2.425" z="-0.125"/>
+        <legs prefix="back_left_2"   x="-1.175"  y="-2.425" z="-0.125"/>
+        <pillar prefix="front_right_2" x=" 0.8"  y=" 1.6" z="-0.075"/>
+        <pillar prefix="front_left_2"  x=" 0.8"  y="-1.6" z="-0.075"/>
+        <pillar prefix="back_right_2"  x="-0.8"  y=" 1.6" z="-0.075"/>
+        <pillar prefix="back_left_2"   x="-0.8"  y="-1.6" z="-0.075"/>
+
+    </xacro:macro>
+</robot>

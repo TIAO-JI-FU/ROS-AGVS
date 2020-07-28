@@ -3,9 +3,9 @@
 	<arg name="gui" default="true" />
 	<arg name="debug" default="false"/>
 
-    <!-- 设置GUI参数，显示关节控制插件 -->
 	<!-- <param name="use_gui" value="$(arg gui)"/> -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find agv_description)/worlds/factory_world.world"/>
     	<arg name="debug" value="$(arg debug)" />
     	<arg name="gui" value="$(arg gui)" />
     	<arg name="paused" value="false"/>
@@ -15,15 +15,12 @@
 
   	<!-- Load the URDF into the ROS Parameter Server -->
   	<param name="robot_description"
-  	       command="$(find xacro)/xacro.py '$(find agv_description)/xacro/agv.xacro'" />
+  	       command="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />
 
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model agvs -param robot_description -z 0.35"/>
+    args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.02 "/>
 
-    <!-- 运行joint_state_publisher节点，发布机器人的关节状态  -->
-	<!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />-->
-
-    <!-- 运行rviz可视化界面 -->
+    <!-- rviz -->
 	<!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find agv_description)/config/agv.rviz" required="true" /> -->
 
   	<!-- ros_control agvs launch file -->
