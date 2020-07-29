@@ -8,17 +8,17 @@
     <xacro:property name="base_width" value="4"/>
     <xacro:property name="base_height" value="0.25"/>
 
-    <xacro:property name="wheel_joint_damping" value="1.0" />
-    <xacro:property name="wheel_joint_friction" value="1.0" />
+    <xacro:property name="wheel_joint_damping" value="0.0" />
+    <xacro:property name="wheel_joint_friction" value="0.0" />
     <xacro:property name="wheel_joint_effort_limit" value="10.0" />
     <xacro:property name="wheel_joint_velocity_limit" value="20.0" />
-    <xacro:property name="wheel_mechanical_reduction" value="100.0" />
+    <xacro:property name="wheel_mechanical_reduction" value="1.0" />
 
-    <xacro:property name="steer_joint_damping" value="2.0" />
-    <xacro:property name="steer_joint_friction" value="1.0" />
+    <xacro:property name="steer_joint_damping" value="0.0" />
+    <xacro:property name="steer_joint_friction" value="0.0" />
     <xacro:property name="steer_joint_effort_limit" value="10.0" />
     <xacro:property name="steer_joint_velocity_limit" value="10.0" />
-    <xacro:property name="motor_wheel_mechanical_reduction" value="100.0" />
+    <xacro:property name="motor_wheel_mechanical_reduction" value="1.0" />
 
     <!-- Macro for whell -->
     <xacro:macro name="wheel" params="prefix x y z">
@@ -44,11 +44,28 @@
                 <origin xyz="0 0 0" rpy="0 0 0" /> 
                 <geometry>
 	                <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
+                    <selfCollide>false</selfCollide>
                 </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <kp>1000000.0</kp>
+                            <kd>100.0</kd>
+                            <mu1>1.5</mu1>
+                            <mu2>1.5</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode>
+                            <min_depth>0.001</min_depth>
+                            <kp>1e9</kp>
+                        </ode>
+                    </contact>
+                </surface>
             </collision>
 
             <inertial>
-                <mass value="10.0" />
+                <mass value="0.5" />
                 <origin xyz="0 0 0" />
                 <inertia  ixx="1.0" ixy="0.0" ixz="0.0"
                           iyy="1.0" iyz="0.0"  
@@ -93,11 +110,28 @@
                 <origin xyz="0 0 0" rpy="0 0 0" /> 
                 <geometry>
 	                <mesh filename="package://agv_description/meshes/agvs_wheel.dae" scale="1.0 1.0 1.0"/>
+                    <selfCollide>false</selfCollide>
                 </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <kp>1000000.0</kp>
+                            <kd>100.0</kd>
+                            <mu1>1.5</mu1>
+                            <mu2>1.5</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode>
+                            <min_depth>0.001</min_depth>
+                            <kp>1e9</kp>
+                        </ode>
+                    </contact>
+                </surface>
             </collision>
 
             <inertial>
-                <mass value="125.0" />
+                <mass value="2.0" />
                 <origin xyz="0 0 0" />
                 <inertia  ixx="1.0" ixy="0.0" ixz="0.0"  
                           iyy="1.0" iyz="0.0"  
@@ -160,18 +194,34 @@
             </visual>
 
             <collision>
-               <origin xyz="0 0 0" rpy="0 0 0 " />
-               <geometry>
+                <origin xyz="0 0 0" rpy="0 0 0 " />
+                <geometry>
                     <box size="${base_length} ${base_width} ${base_height}"/>
-               </geometry>
+                    <selfCollide>false</selfCollide>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <kp>1000000.0</kp>
+                            <kd>100.0</kd>
+                            <mu1>1.5</mu1>
+                            <mu2>1.5</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode>
+                            <min_depth>0.001</min_depth>
+                            <kp>1e9</kp>
+                        </ode>
+                    </contact>
+                </surface>
             </collision>
-
             <inertial>
-                <mass value="225.0" />
+                <mass value="0.1" />
                 <origin xyz="0 0 0" />
-                <inertia  ixx="1.0" ixy="0.0" ixz="0.0"  
-                          iyy="1.0" iyz="0.0"  
-                          izz="1.0" />  
+                <inertia  ixx="0.0" ixy="0.0" ixz="0.0"  
+                          iyy="0.0" iyz="0.0"  
+                          izz="0.0" />  
             </inertial>
         </link>
 

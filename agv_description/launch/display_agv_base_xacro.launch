@@ -13,12 +13,12 @@
     	<arg name="headless" value="false"/>
   	</include>
 
-  	<!-- Load the URDF into the ROS Parameter Server -->
+  	<!-- Load the Xacro into the ROS Parameter Server -->
   	<param name="robot_description"
   	       command="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />
 
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.02 "/>
+    args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.019997 "/>
 
     <!-- rviz -->
 	<!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find agv_description)/config/agv.rviz" required="true" /> -->
