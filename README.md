@@ -9,7 +9,7 @@ No.| Features              | State    | Date   |
 5  | AGVS controller       | Finish   |7/27    |
 6  | Read Lidar data       | Finish   |7/27    |
 7  | Move AGVS             | Finish   |7/28    |
-8  | SLAM map              | N/A      | N/A    |
+8  | SLAM map              | Finish   |7/31    |
 9  | Navigation            | N/A      | N/A    |
 10 | Location calculation  | N/A      | N/A    |
 11 | Angle calculation     | N/A      | N/A    |

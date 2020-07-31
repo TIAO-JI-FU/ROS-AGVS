@@ -1,30 +1,35 @@
 <?xml version="1.0"?>
 <launch>
-	<arg name="gui" default="true" />
-	<arg name="debug" default="false"/>
-
-	<!-- <param name="use_gui" value="$(arg gui)"/> -->
+  	<!-- Arguments -->
+    <arg name="world_name" value="$(find agv_description)/worlds/factory_world.world"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+	
+	<!-- Gazebo -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
-		<arg name="world_name" value="$(find agv_description)/worlds/factory_world.world"/>
-    	<arg name="debug" value="$(arg debug)" />
-    	<arg name="gui" value="$(arg gui)" />
-    	<arg name="paused" value="false"/>
-    	<arg name="use_sim_time" value="true"/>
-    	<arg name="headless" value="false"/>
+		<arg name="world_name" value="$(arg world_name)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
   	</include>
 
   	<!-- Load the Xacro into the ROS Parameter Server -->
-  	<param name="robot_description"
-  	       command="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />
+  	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />
 
+ 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> 
+	 
+   	<!-- State_publisher -->
+ 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  output="screen" >
+ 	    <param name="publish_frequency" type="double" value="50.0" />
+ 	</node>
+   
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.019997 "/>
-
-    <!-- rviz -->
-	<!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find agv_description)/config/agv.rviz" required="true" /> -->
-
-  	<!-- ros_control agvs launch file -->
-  	<include file="$(find agvs_control)/launch/agvs_control.launch" />
+    	args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.019997 "/>
 
 </launch>
 

@@ -87,10 +87,10 @@
         <transmission name="${prefix}_motor_wheel_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${prefix}_motor_wheel_joint">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
             </joint>
             <actuator name="${prefix}_motor_joint_motor">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
                 <mechanicalReduction>${motor_wheel_mechanical_reduction}</mechanicalReduction>
             </actuator>
         </transmission>
@@ -179,7 +179,7 @@
             </visual>
         </link>
 
-        <joint name="base_footprint_joint" type="fixed">
+        <joint name="base_joint" type="fixed">
             <origin xyz="0 0 0.394815" rpy="0 0 0" />        
             <parent link="base_footprint"/>
             <child link="base_link" />
