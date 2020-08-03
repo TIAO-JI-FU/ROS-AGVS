@@ -1,0 +1,4 @@
+<launch>
+  <node name="cmd_vel_transfer_to_agvs" pkg="cmd_vel_transfer_to_agvs" type="cmd_vel_transfer_to_agvs.py" output="screen">
+  </node>
+</launch>

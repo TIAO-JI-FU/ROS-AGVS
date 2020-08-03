@@ -140,7 +140,7 @@
         </link>
 
         <joint name="${prefix}_wheel_joint" type="continuous">
-            <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <parent link="${prefix}_motor_wheel_link"/>
             <child link="${prefix}_wheel_link"/>
             <axis xyz="0 1 0"/>

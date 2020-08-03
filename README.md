@@ -1,5 +1,5 @@
 # ROS-AGVS
-### Schedule Software
+## Schedule Software
 No.| Features              | State    | Date   |
 :-:|:---------------------:|:--------:|:------:|
 1  | Flow chart            | Finish   |7/22    |
@@ -17,7 +17,7 @@ No.| Features              | State    | Date   |
 13 | Imformation collection| N/A      | N/A    |
 14 | Instruction decode    | N/A      | N/A    |
 
-### Schedule Hardware
+## Schedule Hardware
 No.| Features              | State    | Date   |
 :-:|:---------------------:|:--------:|:------:|
 1  | Robot move (Raspberry)| N/A      | N/A    |
@@ -27,3 +27,7 @@ No.| Features              | State    | Date   |
 5  | Arduino control       | N/A      | N/A    |
 6  | Integration           | N/A      | N/A    |
 7  | Debug                 | N/A      | N/A    |
+
+## How to use
+
+### Slam

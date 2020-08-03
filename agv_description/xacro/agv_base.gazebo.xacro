@@ -1,18 +1,10 @@
 <?xml version="1.0"?>
 <robot>
-<!--
-    <gazebo>
-        <plugin name="ros_control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/agvs</robotNamespace>
-            <controlPeriod>0.001</controlPeriod>
-            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        </plugin>
-    </gazebo>
--->
+
     <gazebo>
         <plugin name="agvs_wheel_controller" filename="libgazebo_ros_skid_steer_drive.so">
             <updateRate>100.0</updateRate>
-            <robotNamespace>/</robotNamespace>
+            <robotNamespace>/agvs_wheel</robotNamespace>
             <leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
             <rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
             <leftRearJoint>back_left_wheel_joint</leftRearJoint>
@@ -32,7 +24,7 @@
     </gazebo>
 
     <gazebo>
-        <plugin name="agvs_controller" filename="libgazebo_ros_skid_steer_drive.so">
+        <plugin name="agvs_motor_controller" filename="libgazebo_ros_skid_steer_drive.so">
             <updateRate>100.0</updateRate>
             <robotNamespace>/agvs_motor_wheel</robotNamespace>
             <leftFrontJoint>front_left_motor_wheel_joint</leftFrontJoint>
