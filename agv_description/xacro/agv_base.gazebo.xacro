@@ -23,6 +23,14 @@
         </plugin>
     </gazebo>
 
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/agvs</robotNamespace>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        </plugin>
+    </gazebo>
+<!--
     <gazebo>
         <plugin name="agvs_motor_controller" filename="libgazebo_ros_skid_steer_drive.so">
             <updateRate>100.0</updateRate>
@@ -44,5 +52,5 @@
             <publishWheelJointState>true</publishWheelJointState>
         </plugin>
     </gazebo>
-
+-->
 </robot>

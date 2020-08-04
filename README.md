@@ -10,7 +10,7 @@ No.| Features              | State    | Date   |
 6  | Read Lidar data       | Finish   |7/27    |
 7  | Move AGVS             | Finish   |7/28    |
 8  | SLAM map              | Finish   |7/31    |
-9  | Navigation            | N/A      | N/A    |
+9  | Navigation            | Finish   |8/04    |
 10 | Location calculation  | N/A      | N/A    |
 11 | Angle calculation     | N/A      | N/A    |
 12 | Distance calculation  | N/A      | N/A    |

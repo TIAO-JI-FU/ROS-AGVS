@@ -1,0 +1,22 @@
+agvs:
+# Position controllers 
+# Be careful with the selection of the pid values, e.g. d: 50.0 produces a nan in the velocity ???
+  front_right_motor_wheel_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: front_right_motor_wheel_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  front_left_motor_wheel_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: front_left_motor_wheel_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  back_right_motor_wheel_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: back_right_motor_wheel_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  back_left_motor_wheel_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: back_left_motor_wheel_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}

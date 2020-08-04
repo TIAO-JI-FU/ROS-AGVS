@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load joint controller configurations from YAcd .ML file to parameter server -->
+  <rosparam file="$(find agvs_control)/config/agvs_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/agvs" args="--namespace=/agvs
+                      front_right_motor_wheel_joint_controller
+                      front_left_motor_wheel_joint_controller
+                      back_right_motor_wheel_joint_controller
+                      back_left_motor_wheel_joint_controller
+                      "/>
+
+</launch>

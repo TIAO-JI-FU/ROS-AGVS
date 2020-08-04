@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+
   	<!-- Arguments -->
     <arg name="world_name" value="$(find agv_description)/worlds/factory_world.world"/>
     <arg name="paused" default="false"/>
@@ -30,6 +31,8 @@
    
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
     	args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.019997 "/>
+	
+	<include file="$(find agvs_control)/launch/agvs_control.launch" />
 
 </launch>
 

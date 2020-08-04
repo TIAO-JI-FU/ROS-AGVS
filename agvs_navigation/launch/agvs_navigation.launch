@@ -2,7 +2,7 @@
   <!-- Arguments -->
   <arg name="map_file" default="$(find agvs_slam)/map/agvs_gmapping.yaml"/>
   <arg name="open_rviz" default="true"/>
-  <arg name="move_forward_only" default="true"/>
+  <arg name="move_forward_only" default="false"/>
 
   <!-- Agvs -->
   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />

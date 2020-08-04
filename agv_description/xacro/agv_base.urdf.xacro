@@ -46,22 +46,6 @@
 	                <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
                     <selfCollide>false</selfCollide>
                 </geometry>
-                <surface>
-                    <friction>
-                        <ode>
-                            <kp>1000000.0</kp>
-                            <kd>100.0</kd>
-                            <mu1>1.5</mu1>
-                            <mu2>1.5</mu2>
-                        </ode>
-                    </friction>
-                    <contact>
-                        <ode>
-                            <min_depth>0.001</min_depth>
-                            <kp>1e9</kp>
-                        </ode>
-                    </contact>
-                </surface>
             </collision>
 
             <inertial>
@@ -87,10 +71,10 @@
         <transmission name="${prefix}_motor_wheel_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${prefix}_motor_wheel_joint">
-                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </joint>
             <actuator name="${prefix}_motor_joint_motor">
-                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
                 <mechanicalReduction>${motor_wheel_mechanical_reduction}</mechanicalReduction>
             </actuator>
         </transmission>
@@ -112,22 +96,6 @@
 	                <mesh filename="package://agv_description/meshes/agvs_wheel.dae" scale="1.0 1.0 1.0"/>
                     <selfCollide>false</selfCollide>
                 </geometry>
-                <surface>
-                    <friction>
-                        <ode>
-                            <kp>1000000.0</kp>
-                            <kd>100.0</kd>
-                            <mu1>1.5</mu1>
-                            <mu2>1.5</mu2>
-                        </ode>
-                    </friction>
-                    <contact>
-                        <ode>
-                            <min_depth>0.001</min_depth>
-                            <kp>1e9</kp>
-                        </ode>
-                    </contact>
-                </surface>
             </collision>
 
             <inertial>
@@ -147,7 +115,7 @@
             <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
             <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
         </joint>
-
+<!--
         <transmission name="${prefix}_wheel_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${prefix}_wheel_joint">
@@ -158,7 +126,7 @@
                 <mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
             </actuator>
         </transmission>
-
+-->
     </xacro:macro>
 
     <!-- Macro for agv_base -->

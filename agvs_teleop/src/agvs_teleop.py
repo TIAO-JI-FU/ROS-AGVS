@@ -3,7 +3,9 @@
 
 import rospy
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64
 import sys, select, termios, tty
+import math
 
 msg = """
 Control agvs!
@@ -47,16 +49,20 @@ if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
     
     rospy.init_node('agvs_teleop')
-    pub = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
-    pub_motor = rospy.Publisher('/agvs_motor_wheel/cmd_vel', Twist, queue_size=5)
+    pub = rospy.Publisher('/agvs_wheel/cmd_vel', Twist, queue_size=5)
+    front_right_motor_wheel = rospy.Publisher('/agvs/front_right_motor_wheel_joint_controller/command', Float64, queue_size=5)
+    front_left_motor_wheel  = rospy.Publisher('/agvs/front_left_motor_wheel_joint_controller/command' , Float64, queue_size=5)
+    back_right_motor_wheel  = rospy.Publisher('/agvs/back_right_motor_wheel_joint_controller/command' , Float64, queue_size=5)
+    back_left_motor_wheel   = rospy.Publisher('/agvs/back_left_motor_wheel_joint_controller/command'  , Float64, queue_size=5)
 
     x = 0
     th = 0
+    now_th = 0
+    rotate_rate = math.pi/40
     status = 0
     count = 0
     acc = 0.1
     target_speed = 0
-    target_turn = 0
     control_speed = 0
     control_turn = 0
     try:
@@ -67,25 +73,25 @@ if __name__=="__main__":
             # Direction
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
-                th = moveBindings[key][1]
+                if(moveBindings[key][1]== -1):
+                    th = math.pi/2
+                elif(moveBindings[key][1]== 1):
+                    th = 0.0  
                 count = 0
 
             # Stop
             elif key == ' ' or key == 's' :
                 x = 0
-                th = 0
                 control_speed = 0
                 control_turn = 0
             else:
                 count = count + 1
                 if count > 4:
                     x = 0
-                    th = 0
                 if (key == '\x03'):
                     break
 
             target_speed = speed * x
-            target_turn = turn * th
 
             if target_speed > control_speed:
                 control_speed = min( target_speed, control_speed + 0.02 )
@@ -93,14 +99,16 @@ if __name__=="__main__":
                 control_speed = max( target_speed, control_speed - 0.02 )
             else:
                 control_speed = target_speed
-
-            if target_turn > control_turn:
-                control_turn = min( target_turn, control_turn + 0.1 )
-            elif target_turn < control_turn:
-                control_turn = max( target_turn, control_turn - 0.1 )
-            else:
-                control_turn = target_turn
-
+            
+            r = rospy.Rate(5)
+            while(abs(th-now_th)>0.003):
+                now_th = now_th + ((th-now_th)/abs(th-now_th))*rotate_rate
+                front_right_motor_wheel.publish(now_th)
+                front_left_motor_wheel.publish(now_th)
+                back_right_motor_wheel.publish(now_th)
+                back_left_motor_wheel.publish(now_th)
+                r.sleep()
+            
             twist = Twist()
             twist.linear.x = control_speed 
             twist.linear.y = 0
@@ -109,14 +117,7 @@ if __name__=="__main__":
             twist.angular.y = 0 
             twist.angular.z = 0
             twist_motor = Twist()
-            twist_motor.linear.x = control_turn 
-            twist_motor.linear.y = 0
-            twist_motor.linear.z = 0
-            twist_motor.angular.x = 0 
-            twist_motor.angular.y = 0 
-            twist_motor.angular.z = 0
             pub.publish(twist)
-            pub_motor.publish(twist_motor)
 
     except:
         print e
