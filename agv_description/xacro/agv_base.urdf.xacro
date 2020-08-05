@@ -22,11 +22,6 @@
 
     <!-- Macro for whell -->
     <xacro:macro name="wheel" params="prefix x y z">
-        <!--
-        <gazebo>
-            <static>true</static>
-        </gazebo>
-        -->
         
         <link name="${prefix}_motor_wheel_link">
             <visual>
@@ -115,27 +110,12 @@
             <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
             <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
         </joint>
-<!--
-        <transmission name="${prefix}_wheel_trans">
-            <type>transmission_interface/SimpleTransmission</type>
-            <joint name="${prefix}_wheel_joint">
-	            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>     
-            </joint>
-            <actuator name="${prefix}_wheel_joint_motor">
-	            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>  
-                <mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
-            </actuator>
-        </transmission>
--->
+
     </xacro:macro>
 
     <!-- Macro for agv_base -->
     <xacro:macro name="agv_base">
-        <!--
-        <gazebo>
-            <static>true</static>
-        </gazebo>
-        -->
+    
         <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link 
              origin, navigation stack depends on this frame -->
         <link name="base_footprint">

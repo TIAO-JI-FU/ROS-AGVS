@@ -100,7 +100,7 @@ if __name__=="__main__":
             else:
                 control_speed = target_speed
             
-            r = rospy.Rate(5)
+            r = rospy.Rate(2)
             while(abs(th-now_th)>0.003):
                 now_th = now_th + ((th-now_th)/abs(th-now_th))*rotate_rate
                 front_right_motor_wheel.publish(now_th)

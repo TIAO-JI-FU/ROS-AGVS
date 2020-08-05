@@ -10,24 +10,33 @@ from move_base_msgs.msg import MoveBaseActionGoal
 
 class agvs_parameter:
     def __init__(self, x_position, y_postition, angular):
-
+        
+        # Set Subscriber
         self.cmd_vel_sub = rospy.Subscriber('/cmd_vel', Twist , self.cmd_vel_callback)
         self.goal_sub = rospy.Subscriber('/move_base/goal', MoveBaseActionGoal , self.goal_callback)
         self.feedback_sub = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped , self.feedback_callback)
         
+        # Set Publisher
         self.pub_wheel = rospy.Publisher('/agvs_wheel/cmd_vel', Twist, queue_size=5)
         self.front_right_motor_wheel = rospy.Publisher('/agvs/front_right_motor_wheel_joint_controller/command', Float64, queue_size=5)
         self.front_left_motor_wheel  = rospy.Publisher('/agvs/front_left_motor_wheel_joint_controller/command' , Float64, queue_size=5)
         self.back_right_motor_wheel  = rospy.Publisher('/agvs/back_right_motor_wheel_joint_controller/command' , Float64, queue_size=5)
         self.back_left_motor_wheel   = rospy.Publisher('/agvs/back_left_motor_wheel_joint_controller/command'  , Float64, queue_size=5)
         
+        # Set Parameters
         self.rotate_angular = angular
         self.rotate_rate = math.pi/4000
+        self.rotate_state = False
+
         self.now_angular = angular
         self.now_x_position = x_position
         self.now_y_position = y_postition
+
         self.goal_x_position = x_position
         self.goal_y_position = y_postition
+
+        self.agvs_velocity = 0.0
+
         self.feedback_enable = False
 
     def cmd_vel_callback(self, data):
@@ -37,16 +46,9 @@ class agvs_parameter:
         judge_x = self.calculate_positive_or_negative(self.goal_x_position - self.now_x_position)
         judge_y = self.calculate_positive_or_negative(self.goal_y_position - self.now_y_position)
         
-        change = 1.0
-        if(absolute_x > 0.03):
-            pass
-        elif(judge_y == -1):
-            change = -1.0
-        else:
-            pass
-        
+        # Set velocity of wheels
         twist_wheel = Twist()
-        twist_wheel.linear.x = data.linear.x * change
+        twist_wheel.linear.x = 0
         twist_wheel.linear.y = 0
         twist_wheel.linear.z = 0
         twist_wheel.angular.x = 0
@@ -54,13 +56,20 @@ class agvs_parameter:
         twist_wheel.angular.z = 0
 
         if(self.feedback_enable):
-            self.pub_wheel.publish(twist_wheel)
+#            twist_wheel.linear.x = data.linear.y if(self.rotate_state) else data.linear.x
+            change = 1.0
+            if(self.rotate_state):
+                change = -(judge_y)
+            twist_wheel.linear.x = data.linear.x * change
             self.feedback_enable = False
             self.front_right_motor_wheel.publish(self.now_angular)
             self.front_left_motor_wheel.publish(self.now_angular)
             self.back_right_motor_wheel.publish(self.now_angular)
             self.back_left_motor_wheel.publish(self.now_angular)
             self.feedback_enable = True
+        else:
+            pass
+        self.pub_wheel.publish(twist_wheel)
 
     def goal_callback(self, data):
 
@@ -71,11 +80,13 @@ class agvs_parameter:
         absolute_y = abs(self.goal_y_position - self.now_y_position)
 
         if((absolute_x < 0.1) and (absolute_y > 0.1)):
-            self.rotate_angular = -(math.pi/2)
+            self.rotate_state = True
+            self.rotate_angular = math.pi/2
         elif((absolute_y < 0.1) and (absolute_x > 0.1)):
+            self.rotate_state = False
             self.rotate_angular = 0.00000
         else:
-            pass
+            rospy.signal_shutdown("Some problam of next point")
 
         self.feedback_enable = False
         r = rospy.Rate(500)
@@ -86,6 +97,14 @@ class agvs_parameter:
             self.front_left_motor_wheel.publish(self.now_angular)
             self.back_right_motor_wheel.publish(self.now_angular)
             self.back_left_motor_wheel.publish(self.now_angular)
+            twist_wheel = Twist()
+            twist_wheel.linear.x = 0.0
+            twist_wheel.linear.y = 0.0
+            twist_wheel.linear.z = 0.0
+            twist_wheel.angular.x = 0.0
+            twist_wheel.angular.y = 0.0
+            twist_wheel.angular.z = 0.0
+            self.pub_wheel.publish(twist_wheel)
             r.sleep()
         self.feedback_enable = True
 
@@ -104,7 +123,10 @@ class agvs_parameter:
             if(self.feedback_enable):
                 way = max(absolute_x,absolute_y)
                 self.now_angular = math.acos(way/((absolute_x**2+absolute_y**2)**0.5))*p_or_n + self.rotate_angular
-    
+            else:
+                pass
+        else:
+            pass
     def calculate_positive_or_negative(self, data):
 
         return (data)/abs(data)

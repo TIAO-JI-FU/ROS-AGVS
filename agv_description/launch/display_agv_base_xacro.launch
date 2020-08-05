@@ -21,17 +21,20 @@
 
   	<!-- Load the Xacro into the ROS Parameter Server -->
   	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find agv_description)/xacro/agv.xacro'" />
-
+	
+	<!-- Joint_state_publisher -->
  	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> 
 	 
-   	<!-- State_publisher -->
+   	<!-- Robot_state_publisher -->
  	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  output="screen" >
  	    <param name="publish_frequency" type="double" value="50.0" />
  	</node>
-   
+    
+	<!-- Set model position -->
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
     	args="-urdf -model agvs -param robot_description -x 2.22 -y 4.675 -z 0.019997 "/>
 	
+	<!-- Include controller of motor_wheel -->
 	<include file="$(find agvs_control)/launch/agvs_control.launch" />
 
 </launch>

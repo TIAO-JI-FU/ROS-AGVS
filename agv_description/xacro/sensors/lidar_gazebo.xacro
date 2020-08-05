@@ -5,6 +5,7 @@
     <xacro:property name="M_PI" value="3.14159265359"/>
 
     <xacro:macro name="rplidar" params="prefix:=laser">
+    
         <!-- Create laser reference frame -->
         <link name="${prefix}_link">
             <visual>
