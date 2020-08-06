@@ -26,8 +26,13 @@
         <link name="${prefix}_motor_wheel_link">
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
+                <!--
                 <geometry>
                     <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
+                </geometry>
+                -->
+                <geometry>
+                    <box size="0.1 0.1 0.1" />
                 </geometry>
             </visual>
 
@@ -37,9 +42,13 @@
 
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" /> 
+                <!--
                 <geometry>
-	                <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
-                    <selfCollide>false</selfCollide>
+                    <mesh filename="package://agv_description/meshes/motor_wheel.dae" scale="1.0 1.0 1.0"/>
+                </geometry>
+                -->
+                <geometry>
+                    <box size="0.1 0.1 0.1" />
                 </geometry>
             </collision>
 
