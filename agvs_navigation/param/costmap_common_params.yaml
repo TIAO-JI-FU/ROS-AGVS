@@ -1,12 +1,17 @@
-obstacle_range: 3.5
-raytrace_range: 3.5
-
-footprint: [[-0.105, -0.105], [-0.105, 0.105], [0.041, 0.105], [0.041, -0.105]]
-#robot_radius: 0.105
-
-inflation_radius: 0.1
-cost_scaling_factor: 3.0
-
-map_type: costmap
-observation_sources: scan
-scan: {sensor_frame: laser_link, data_type: LaserScan, topic: scan, marking: true, clearing: true}
+robot_base_frame: base_footprint
+transform_tolerance: 0.4
+update_frequency: 1.0
+publish_frequency: 1.0
+obstacle_range: 5.0
+#mark_threshold: 1
+publish_voxel_map: true
+navigation_map:
+  map_topic: /map
+obstacles:
+  observation_sources: scan
+  scan: 
+    sensor_frame: laser_link
+    data_type: LaserScan 
+    topic: scan
+    marking: true
+    clearing: true
