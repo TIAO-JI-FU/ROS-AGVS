@@ -38,15 +38,16 @@ class agvs_parameter:
         self.goal_y_position = y_postition
 
         self.first_times_zero = False
+        self.moving = False
 
         self.feedback_enable = False
         self.twist_wheel = Twist()
-        self.twist_wheel.linear.x = 0
-        self.twist_wheel.linear.y = 0
-        self.twist_wheel.linear.z = 0
-        self.twist_wheel.angular.x = 0
-        self.twist_wheel.angular.y = 0
-        self.twist_wheel.angular.z = 0
+        self.twist_wheel.linear.x = 0.0
+        self.twist_wheel.linear.y = 0.0
+        self.twist_wheel.linear.z = 0.0
+        self.twist_wheel.angular.x = 0.0
+        self.twist_wheel.angular.y = 0.0
+        self.twist_wheel.angular.z = 0.0
 
     def Cmd_vel_callback(self, data):
 
@@ -56,23 +57,34 @@ class agvs_parameter:
         judge_y = self.Calculate_positive_or_negative(self.goal_y_position - self.now_y_position)
 
         # Set velocity of wheels
-        self.twist_wheel.linear.x = 0
+        self.twist_wheel.linear.x = 0.0
+        print("Enable:",self.feedback_enable)
         if(self.feedback_enable):
-            self.twist_wheel.linear.x = data.linear.y if(self.rotate_state) else data.linear.x
+            self.twist_wheel.linear.x = data.linear.y if(self.rotate_state) else data.linear.x    
+            self.moving = True
+            self.feedback_enable = False
+            self.wheel_pub.publish(self.twist_wheel)
+            self.Push_rotate(self.now_angular)
+            self.moving = False
+            self.feedback_enable = True
+
+            if(data.linear.x == 0.0 and data.linear.y == 0.0 and data.angular.z == 0.0):
+                print("Now_position_X: " + str(self.now_x_position))
+                print("Now_position_Y: " + str(self.now_y_position))
+                print("absolute_x: " + str(absolute_x))
+                print("absolute_y: " + str(absolute_y))
+            
             judge_dir = judge_y if(self.rotate_state) else judge_x
-            if(absolute_x > 0.05 or absolute_y > 0.05):
-                if((self.twist_wheel.linear.x * judge_dir <= 0) and self.first_times_zero):
+            if((absolute_x > 0.04) or (absolute_y > 0.04)):
+                if((self.twist_wheel.linear.x * judge_dir <= 0.0) and self.first_times_zero):
                     push_data = GoalID()
                     self.move_base_cancel_pub.publish(push_data)
                 else:
                     self.first_times_zero = True
-            self.feedback_enable = False
-            self.Push_rotate(self.now_angular)
-            self.feedback_enable = True
+            else:
+                pass
         else:
             pass
-        self.wheel_pub.publish(self.twist_wheel)
-
     def Goal_callback(self, data):
 
         self.goal_x_position = data.goal.target_pose.pose.position.x
@@ -96,7 +108,7 @@ class agvs_parameter:
             judge_angular = self.Calculate_positive_or_negative(self.rotate_angular - self.now_angular)
             self.now_angular = self.now_angular + (judge_angular * self.rotate_rate)
             self.Push_rotate(self.now_angular)
-
+            print("GGGGGGG")
             self.twist_wheel.linear.x = 0.0
             self.wheel_pub.publish(self.twist_wheel)
             r.sleep()
@@ -104,23 +116,25 @@ class agvs_parameter:
         self.first_times_zero = False
 
     def Feedback_callback(self, data):
+        if(~self.moving):
+            self.now_x_position = data.pose.pose.position.x
+            self.now_y_position = data.pose.pose.position.y
+            absolute_x = abs(self.goal_x_position - self.now_x_position)
+            absolute_y = abs(self.goal_y_position - self.now_y_position)
+            judge_x = self.Calculate_positive_or_negative(self.goal_x_position - self.now_x_position)
+            judge_y = self.Calculate_positive_or_negative(self.goal_y_position - self.now_y_position)
 
-        self.now_x_position = data.pose.pose.position.x
-        self.now_y_position = data.pose.pose.position.y
-        absolute_x = abs(self.goal_x_position - self.now_x_position)
-        absolute_y = abs(self.goal_y_position - self.now_y_position)
-        judge_x = self.Calculate_positive_or_negative(self.goal_x_position - self.now_x_position)
-        judge_y = self.Calculate_positive_or_negative(self.goal_y_position - self.now_y_position)
-        
-        if((absolute_x > 0.03) or (absolute_y > 0.03)):
-            p_or_n = judge_x * judge_y
-            p_or_n = p_or_n if absolute_x > absolute_y else p_or_n*(-1)
-            if(self.feedback_enable):
-                way = absolute_y if(self.rotate_state) else absolute_x
-                self.now_angular = math.acos(way/((absolute_x**2+absolute_y**2)**0.5))*p_or_n*0.7 + self.rotate_angular
-                #print("Now_angular: ",self.now_angular)
-                #print("Now_X: ",self.now_x_position)
-                #print("Now_Y: ",self.now_y_position)
+            if((absolute_x > 0.03) or (absolute_y > 0.03)):
+                p_or_n = judge_x * judge_y
+                p_or_n = p_or_n if absolute_x > absolute_y else p_or_n*(-1)
+                if(self.feedback_enable):
+                    way = absolute_y if(self.rotate_state) else absolute_x
+                    self.now_angular = math.acos(way/((absolute_x**2+absolute_y**2)**0.5))*p_or_n*0.8 + self.rotate_angular
+                    #print("Now_angular: ",self.now_angular)
+                    #print("Now_X: ",self.now_x_position)
+                    #print("Now_Y: ",self.now_y_position)
+                else:
+                    pass
             else:
                 pass
         else:

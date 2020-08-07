@@ -207,3 +207,6 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(agvs_laser_obstacle_clearing_filter src/agvs_laser_obstacle_clearing_filter.cpp)
+target_link_libraries(agvs_laser_obstacle_clearing_filter ${catkin_LIBRARIES})

@@ -20,13 +20,12 @@
 
     <xacro:rplidar prefix="laser"/>
     
-    <!-- property for goods 
+    <!-- property for goods -->
     <xacro:property name="goods_offset_x" value="0" />
     <xacro:property name="goods_offset_y" value="0" />
     <xacro:property name="goods_offset_z" value="0.215" />
--->
+
     <!-- goods -->
-    <!--
 
     <joint name="goods_joint" type="fixed">
         <origin xyz="${goods_offset_x} ${goods_offset_y} ${goods_offset_z}" rpy="0 0 0" />
@@ -35,6 +34,5 @@
     </joint>
     <put_7m_goods/>
     
-    -->
 
 </robot>

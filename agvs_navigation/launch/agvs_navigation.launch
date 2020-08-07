@@ -25,4 +25,6 @@
   <!-- cmd_vel transfer to agvs topic -->
 	<include file="$(find cmd_vel_transfer_to_agvs)/launch/cmd_vel_transfer_to_agvs.launch" />
 
+	<include file="$(find agvs_navigation)/launch/agvs_laser_obstacle_clearing_filter.launch" />
+
 </launch>
