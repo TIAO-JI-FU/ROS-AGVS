@@ -4,6 +4,7 @@
 import rospy
 import math
 import tf
+from dynamic_reconfigure.client import Client
 from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, Quaternion
 from std_msgs.msg import Float64
 from move_base_msgs.msg import MoveBaseActionGoal
@@ -11,19 +12,6 @@ from actionlib_msgs.msg import GoalID
 
 class agvs_parameter:
     def __init__(self, x_position, y_postition, angular):
-        
-        # Set Subscriber
-        self.cmd_vel_sub = rospy.Subscriber('/cmd_vel', Twist , self.Cmd_vel_callback)
-        self.goal_sub = rospy.Subscriber('/move_base/goal', MoveBaseActionGoal , self.Goal_callback)
-        self.feedback_sub = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped , self.Feedback_callback)
-
-        # Set Publisher
-        self.wheel_pub = rospy.Publisher('/agvs_wheel/cmd_vel', Twist, queue_size=5)
-        self.move_base_cancel_pub = rospy.Publisher('/move_base/cancel', GoalID, queue_size=5)
-        self.front_right_motor_wheel_pub = rospy.Publisher('/agvs/front_right_motor_wheel_joint_controller/command', Float64, queue_size=5)
-        self.front_left_motor_wheel_pub  = rospy.Publisher('/agvs/front_left_motor_wheel_joint_controller/command' , Float64, queue_size=5)
-        self.back_right_motor_wheel_pub  = rospy.Publisher('/agvs/back_right_motor_wheel_joint_controller/command' , Float64, queue_size=5)
-        self.back_left_motor_wheel_pub   = rospy.Publisher('/agvs/back_left_motor_wheel_joint_controller/command'  , Float64, queue_size=5)
         
         # Set Parameters
         self.rotate_angular = angular
@@ -49,6 +37,25 @@ class agvs_parameter:
         self.twist_wheel.angular.y = 0.0
         self.twist_wheel.angular.z = 0.0
 
+        # Set Subscriber
+        self.cmd_vel_sub = rospy.Subscriber('/cmd_vel', Twist , self.Cmd_vel_callback)
+        self.goal_sub = rospy.Subscriber('/move_base/goal', MoveBaseActionGoal , self.Goal_callback)
+        self.feedback_sub = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped , self.Feedback_callback)
+
+        # Set Publisher
+        self.wheel_pub = rospy.Publisher('/agvs_wheel/cmd_vel', Twist, queue_size=5)
+        self.move_base_cancel_pub = rospy.Publisher('/move_base/cancel', GoalID, queue_size=5)
+        self.front_right_motor_wheel_pub = rospy.Publisher('/agvs/front_right_motor_wheel_joint_controller/command', Float64, queue_size=5)
+        self.front_left_motor_wheel_pub  = rospy.Publisher('/agvs/front_left_motor_wheel_joint_controller/command' , Float64, queue_size=5)
+        self.back_right_motor_wheel_pub  = rospy.Publisher('/agvs/back_right_motor_wheel_joint_controller/command' , Float64, queue_size=5)
+        self.back_left_motor_wheel_pub   = rospy.Publisher('/agvs/back_left_motor_wheel_joint_controller/command'  , Float64, queue_size=5)
+        
+        # Set Serivce
+        self.footprint_ser = Client('/move_base/local_costmap', timeout=10, config_callback=self.Footprint_ser_callback)
+
+    def Footprint_ser_callback(self, data):
+        pass
+    
     def Cmd_vel_callback(self, data):
 
         absolute_x = abs(self.goal_x_position - self.now_x_position)
@@ -58,7 +65,6 @@ class agvs_parameter:
 
         # Set velocity of wheels
         self.twist_wheel.linear.x = 0.0
-        print("Enable:",self.feedback_enable)
         if(self.feedback_enable):
             self.twist_wheel.linear.x = data.linear.y if(self.rotate_state) else data.linear.x    
             self.moving = True
@@ -68,12 +74,6 @@ class agvs_parameter:
             self.moving = False
             self.feedback_enable = True
 
-            if(data.linear.x == 0.0 and data.linear.y == 0.0 and data.angular.z == 0.0):
-                print("Now_position_X: " + str(self.now_x_position))
-                print("Now_position_Y: " + str(self.now_y_position))
-                print("absolute_x: " + str(absolute_x))
-                print("absolute_y: " + str(absolute_y))
-            
             judge_dir = judge_y if(self.rotate_state) else judge_x
             if((absolute_x > 0.04) or (absolute_y > 0.04)):
                 if((self.twist_wheel.linear.x * judge_dir <= 0.0) and self.first_times_zero):
@@ -85,6 +85,7 @@ class agvs_parameter:
                 pass
         else:
             pass
+
     def Goal_callback(self, data):
 
         self.goal_x_position = data.goal.target_pose.pose.position.x
@@ -93,25 +94,30 @@ class agvs_parameter:
         absolute_x = abs(self.goal_x_position - self.now_x_position)
         absolute_y = abs(self.goal_y_position - self.now_y_position)
 
+        new_footprint_string = ''
         if((absolute_x < 0.1) and (absolute_y > 0.1)):
+            new_footprint_string = '[[-1.25, -3.5], [-1.25, 3.5], [1.25, 3.5], [1.25, -3.5]]'
             self.rotate_state = True
             self.rotate_angular = math.pi/2
         elif((absolute_y < 0.1) and (absolute_x > 0.1)):
+            new_footprint_string = '[[-3.5, -3.5], [-3.5, 3.5], [3.5, 3.5], [3.5, -3.5]]'
             self.rotate_state = False
             self.rotate_angular = 0.00000
         else:
             rospy.signal_shutdown("Some problam of next point")
 
+        self.footprint_ser.update_configuration({"footprint":new_footprint_string})
+
         self.feedback_enable = False
-        r = rospy.Rate(500)
+        r = rospy.Rate(400)
         while(abs(self.rotate_angular - self.now_angular) > 0.001):
             judge_angular = self.Calculate_positive_or_negative(self.rotate_angular - self.now_angular)
             self.now_angular = self.now_angular + (judge_angular * self.rotate_rate)
             self.Push_rotate(self.now_angular)
-            print("GGGGGGG")
             self.twist_wheel.linear.x = 0.0
             self.wheel_pub.publish(self.twist_wheel)
             r.sleep()
+        rospy.sleep(3)
         self.feedback_enable = True
         self.first_times_zero = False
 
@@ -130,9 +136,6 @@ class agvs_parameter:
                 if(self.feedback_enable):
                     way = absolute_y if(self.rotate_state) else absolute_x
                     self.now_angular = math.acos(way/((absolute_x**2+absolute_y**2)**0.5))*p_or_n*0.8 + self.rotate_angular
-                    #print("Now_angular: ",self.now_angular)
-                    #print("Now_X: ",self.now_x_position)
-                    #print("Now_Y: ",self.now_y_position)
                 else:
                     pass
             else:

@@ -32,7 +32,7 @@
     
 	<!-- Set model position -->
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    	args="-urdf -model agvs -param robot_description -x 8.065 -y 4.675 -z 0.019997 "/>
+    	args="-urdf -model agvs -param robot_description -x 8.065 -y 4.675 -z 0.0 "/>
 	
 	<!-- Include controller of motor_wheel -->
 	<include file="$(find agvs_control)/launch/agvs_control.launch" />

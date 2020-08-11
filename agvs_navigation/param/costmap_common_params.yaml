@@ -12,6 +12,6 @@ obstacles:
   scan: 
     sensor_frame: laser_link
     data_type: LaserScan 
-    topic: obstacle_clearing_filtered_scan
+    topic: scan
     marking: true
     clearing: true

@@ -1,3 +1,0 @@
-<launch>
-  <node pkg="agvs_navigation" name="agvs_laser_obstacle_clearing_filter" type="agvs_laser_obstacle_clearing_filter" />
-</launch>
