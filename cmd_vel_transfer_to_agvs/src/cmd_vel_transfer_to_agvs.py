@@ -7,6 +7,7 @@ import tf
 from dynamic_reconfigure.client import Client
 from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, Quaternion
 from std_msgs.msg import Float64
+from std_srvs.srv import Empty
 from move_base_msgs.msg import MoveBaseActionGoal
 from actionlib_msgs.msg import GoalID
 
@@ -51,9 +52,9 @@ class agvs_parameter:
         self.back_left_motor_wheel_pub   = rospy.Publisher('/agvs/back_left_motor_wheel_joint_controller/command'  , Float64, queue_size=5)
         
         # Set Serivce
-        self.footprint_ser = Client('/move_base/local_costmap', timeout=10, config_callback=self.Footprint_ser_callback)
+        self.clear_ser = rospy.ServiceProxy('/move_base/clear_costmaps', Empty)
 
-    def Footprint_ser_callback(self, data):
+    def Clear_ser_callback(self, data):
         pass
     
     def Cmd_vel_callback(self, data):
@@ -62,31 +63,35 @@ class agvs_parameter:
         absolute_y = abs(self.goal_y_position - self.now_y_position)
         judge_x = self.Calculate_positive_or_negative(self.goal_x_position - self.now_x_position)
         judge_y = self.Calculate_positive_or_negative(self.goal_y_position - self.now_y_position)
-
         # Set velocity of wheels
         self.twist_wheel.linear.x = 0.0
         if(self.feedback_enable):
-            self.twist_wheel.linear.x = data.linear.y if(self.rotate_state) else data.linear.x    
+            speed = 0.0
+            if((data.linear.x == 0.0) and (data.linear.y == 0.0)):
+                if((absolute_x > 0.04) or (absolute_y > 0.04)):
+                    if(self.first_times_zero):
+                        push_data = GoalID()
+                        self.move_base_cancel_pub.publish(push_data)
+                    else:
+                        self.first_times_zero = True
+                else:
+                    pass
+            else:
+                direction = judge_y if(self.rotate_state) else judge_x
+                speed = (data.linear.x**2+data.linear.y**2)**0.5*direction
+
+            self.twist_wheel.linear.x = speed
             self.moving = True
             self.feedback_enable = False
             self.wheel_pub.publish(self.twist_wheel)
-            self.Push_rotate(self.now_angular)
+            self.Push_rotate(self.now_angular) 
             self.moving = False
             self.feedback_enable = True
-
-            judge_dir = judge_y if(self.rotate_state) else judge_x
-            if((absolute_x > 0.04) or (absolute_y > 0.04)):
-                if((self.twist_wheel.linear.x * judge_dir <= 0.0) and self.first_times_zero):
-                    push_data = GoalID()
-                    self.move_base_cancel_pub.publish(push_data)
-                else:
-                    self.first_times_zero = True
-            else:
-                pass
         else:
             pass
 
     def Goal_callback(self, data):
+        self.clear_ser()
 
         self.goal_x_position = data.goal.target_pose.pose.position.x
         self.goal_y_position = data.goal.target_pose.pose.position.y
@@ -94,20 +99,13 @@ class agvs_parameter:
         absolute_x = abs(self.goal_x_position - self.now_x_position)
         absolute_y = abs(self.goal_y_position - self.now_y_position)
 
-        new_footprint_string = ''
-        if((absolute_x < 0.1) and (absolute_y > 0.1)):
-            new_footprint_string = '[[-1.25, -3.5], [-1.25, 3.5], [1.25, 3.5], [1.25, -3.5]]'
+        if(absolute_y >= absolute_x):
             self.rotate_state = True
             self.rotate_angular = math.pi/2
-        elif((absolute_y < 0.1) and (absolute_x > 0.1)):
-            new_footprint_string = '[[-3.5, -3.5], [-3.5, 3.5], [3.5, 3.5], [3.5, -3.5]]'
+        else:
             self.rotate_state = False
             self.rotate_angular = 0.00000
-        else:
-            rospy.signal_shutdown("Some problam of next point")
-
-        self.footprint_ser.update_configuration({"footprint":new_footprint_string})
-
+        
         self.feedback_enable = False
         r = rospy.Rate(400)
         while(abs(self.rotate_angular - self.now_angular) > 0.001):
@@ -125,19 +123,17 @@ class agvs_parameter:
         if(~self.moving):
             self.now_x_position = data.pose.pose.position.x
             self.now_y_position = data.pose.pose.position.y
+            print("Now_x",self.now_x_position)
+            print("Now_y",self.now_y_position)
             absolute_x = abs(self.goal_x_position - self.now_x_position)
             absolute_y = abs(self.goal_y_position - self.now_y_position)
             judge_x = self.Calculate_positive_or_negative(self.goal_x_position - self.now_x_position)
             judge_y = self.Calculate_positive_or_negative(self.goal_y_position - self.now_y_position)
-
-            if((absolute_x > 0.03) or (absolute_y > 0.03)):
-                p_or_n = judge_x * judge_y
-                p_or_n = p_or_n if absolute_x > absolute_y else p_or_n*(-1)
-                if(self.feedback_enable):
-                    way = absolute_y if(self.rotate_state) else absolute_x
-                    self.now_angular = math.acos(way/((absolute_x**2+absolute_y**2)**0.5))*p_or_n*0.8 + self.rotate_angular
-                else:
-                    pass
+            p_or_n = judge_x * judge_y
+            p_or_n = p_or_n if absolute_x > absolute_y else p_or_n*(-1)
+            if(self.feedback_enable):
+                way = absolute_y if(self.rotate_state) else absolute_x
+                self.now_angular = math.acos(way/((absolute_x**2+absolute_y**2)**0.5))*p_or_n*0.9 + self.rotate_angular
             else:
                 pass
         else:

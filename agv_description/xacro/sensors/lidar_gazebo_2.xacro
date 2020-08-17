@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<robot name="laser" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="laser_2" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- PROPERTY LIST -->
     <xacro:property name="M_PI" value="3.14159265359"/>
 
-    <xacro:macro name="rplidar" params="prefix:=laser">
+    <xacro:macro name="rplidar_2" params="prefix:=laser">
     
         <!-- Create laser reference frame -->
         <link name="${prefix}_link">
@@ -37,7 +37,7 @@
         </gazebo>
 
         <gazebo reference="${prefix}_link">
-            <sensor type="ray" name="rplidar">
+            <sensor type="ray" name="rplidar_2">
                 <pose>0 0 0 0 0 0</pose>
                 <visualize>false</visualize>
                 <update_rate>5</update_rate>
@@ -61,9 +61,9 @@
                       <stddev>0.01</stddev>
                     </noise>
                 </ray>
-                <plugin name="gazebo_rplidar" filename="libgazebo_ros_laser.so">
-                    <topicName>my_scan</topicName>
-                    <frameName>laser_link</frameName>
+                <plugin name="gazebo_rplidar_2" filename="libgazebo_ros_laser.so">
+                    <topicName>my_scan_2</topicName>
+                    <frameName>laser_2_link</frameName>
                 </plugin>
             </sensor>
         </gazebo>

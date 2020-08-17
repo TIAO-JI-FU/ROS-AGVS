@@ -217,10 +217,10 @@
         <wheel prefix="back_right"  x="-0.8"  y=" 1.6" z="-0.285"/>
         <wheel prefix="back_left"   x="-0.8"  y="-1.6" z="-0.285"/>
 -->
-        <wheel prefix="front_right" x=" 0.8"  y=" 1.6" z="-0.15"/>
-        <wheel prefix="front_left"  x=" 0.8"  y="-1.6" z="-0.15"/>
-        <wheel prefix="back_right"  x="-0.8"  y=" 1.6" z="-0.15"/>
-        <wheel prefix="back_left"   x="-0.8"  y="-1.6" z="-0.15"/>
+        <wheel prefix="front_right" x=" 0.9"  y=" 1.9" z="-0.15"/>
+        <wheel prefix="front_left"  x=" 0.9"  y="-1.9" z="-0.15"/>
+        <wheel prefix="back_right"  x="-0.9"  y=" 1.9" z="-0.15"/>
+        <wheel prefix="back_left"   x="-0.9"  y="-1.9" z="-0.15"/>
 
     </xacro:macro>
 </robot>

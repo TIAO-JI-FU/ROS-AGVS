@@ -9,12 +9,12 @@
     <xacro:property name="my_7m_goods_height" value="0.1"/>
     <xacro:property name="my_7m_goods_mass" value="500.0"/>
 
-    <xacro:property name="legs_length" value="0.15"/>
-    <xacro:property name="legs_width" value="0.15"/>
+    <xacro:property name="legs_length" value="0.05"/>
+    <xacro:property name="legs_width" value="0.125"/>
     <xacro:property name="legs_height" value="0.15"/>
     <xacro:property name="legs_mass" value="10.0"/>
 
-    <xacro:property name="pillar_radius" value="0.1"/>
+    <xacro:property name="pillar_radius" value="0.05"/>
     <xacro:property name="pillar_width" value="0.05"/>
     <xacro:property name="pillar_mass" value="10.0" />
 
@@ -137,21 +137,21 @@
         </link>
 
         <gazebo reference="7m_goods_link">
-            <material>Gazebo/Gray</material>
+            <material>Gazebo/white</material>
         </gazebo>
 
-        <legs prefix="front_right" x=" 1.175"  y=" 2.925" z="-0.125"/>
-        <legs prefix="front_left"  x=" 1.175"  y="-2.925" z="-0.125"/>
-        <legs prefix="back_right"  x="-1.175"  y=" 2.925" z="-0.125"/>
-        <legs prefix="back_left"   x="-1.175"  y="-2.925" z="-0.125"/>
-        <legs prefix="front_right_2" x=" 1.175"  y=" 2.425" z="-0.125"/>
-        <legs prefix="front_left_2"  x=" 1.175"  y="-2.425" z="-0.125"/>
-        <legs prefix="back_right_2"  x="-1.175"  y=" 2.425" z="-0.125"/>
-        <legs prefix="back_left_2"   x="-1.175"  y="-2.425" z="-0.125"/>
-        <pillar prefix="front_right_2" x=" 0.8"  y=" 1.6" z="-0.075"/>
-        <pillar prefix="front_left_2"  x=" 0.8"  y="-1.6" z="-0.075"/>
-        <pillar prefix="back_right_2"  x="-0.8"  y=" 1.6" z="-0.075"/>
-        <pillar prefix="back_left_2"   x="-0.8"  y="-1.6" z="-0.075"/>
+        <legs prefix="front_right" x=" 1.225"  y=" 3.4375" z="-0.125"/>
+        <legs prefix="front_left"  x=" 1.225"  y="-3.4375" z="-0.125"/>
+        <legs prefix="back_right"  x="-1.225"  y=" 3.4375" z="-0.125"/>
+        <legs prefix="back_left"   x="-1.225"  y="-3.4375" z="-0.125"/>
+        <legs prefix="front_right_2" x=" 1.225"  y=" 2.4375" z="-0.125"/>
+        <legs prefix="front_left_2"  x=" 1.225"  y="-2.4375" z="-0.125"/>
+        <legs prefix="back_right_2"  x="-1.225"  y=" 2.4375" z="-0.125"/>
+        <legs prefix="back_left_2"   x="-1.225"  y="-2.4375" z="-0.125"/>
+        <pillar prefix="front_right_2" x=" 0.9"  y=" 1.9" z="-0.075"/>
+        <pillar prefix="front_left_2"  x=" 0.9"  y="-1.9" z="-0.075"/>
+        <pillar prefix="back_right_2"  x="-0.9"  y=" 1.9" z="-0.075"/>
+        <pillar prefix="back_left_2"   x="-0.9"  y="-1.9" z="-0.075"/>
 
     </xacro:macro>
 </robot>
