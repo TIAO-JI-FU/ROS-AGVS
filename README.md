@@ -28,6 +28,45 @@ No.| Features              | State    | Date   |
 6  | Integration           | N/A      | N/A    |
 7  | Debug                 | N/A      | N/A    |
 
-## How to use
+## Description
+### agv_description
+This folder is model of agv.
+### agvs_slam
+This folder is slam, use gmapping.
+### agvs_navigation
+This folder is navigation, we have to send goal.
+### agvs_control
+This folder is controller of agv.
+### cmd_vel_transfer_to_agvs
+This folder is change cmd_vel to our agvs velocity.
+### ira_laser_tools
+This folder is mix two laser scan.  
 
-### Slam
+## How to use
+### slam
+  1.Lanuch model
+  
+    roslaunch agv_description display_agv_base_xacro.launch 
+  2.Lanuch mix two scan
+  
+    roslaunch ira_laser_tools laserscan_multi_merger.launch 
+  3.Run tf
+  
+    rosrun tf static_transform_publisher 0.0 0.0 0.0 0.0.0 0.0 map base_link 100 
+  4.Lanuch slam
+  
+    roslaunch agvs_slam agvs_slam.launch
+### Navigation
+  1.Lanuch model
+  
+    roslaunch agv_description display_agv_base_xacro.launch 
+  2.Lanuch mix two scan
+  
+    roslaunch ira_laser_tools laserscan_multi_merger.launch 
+  3.Lanuch navigation
+  
+    roslaunch agvs_navigation agvs_navigation.launch 
+  4.Send goal
+
+    rostopic pub /move_base/goal
+
