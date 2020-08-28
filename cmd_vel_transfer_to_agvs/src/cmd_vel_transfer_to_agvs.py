@@ -54,9 +54,11 @@ class agvs_parameter:
         # Set Serivce
         self.clear_ser = rospy.ServiceProxy('/move_base/clear_costmaps', Empty)
 
+#   Get return of clear service.
     def Clear_ser_callback(self, data):
         pass
-    
+
+#   Navigation will send cmd_vel to topic, and we change it to our velocity, and send to agv.
     def Cmd_vel_callback(self, data):
 
         absolute_x = abs(self.goal_x_position - self.now_x_position)
@@ -79,7 +81,7 @@ class agvs_parameter:
             else:
                 direction = judge_y if(self.rotate_state) else judge_x
                 speed = (data.linear.x**2+data.linear.y**2)**0.5*direction
-
+            # Set speed
             self.twist_wheel.linear.x = speed
             self.moving = True
             self.feedback_enable = False
@@ -90,6 +92,7 @@ class agvs_parameter:
         else:
             pass
 
+#   If you send a goal to the topic, here will get it and set the place of goal in navigation.
     def Goal_callback(self, data):
         self.clear_ser()
 
@@ -119,12 +122,13 @@ class agvs_parameter:
         self.feedback_enable = True
         self.first_times_zero = False
 
+#   Get now place of AMCL in the global map.
     def Feedback_callback(self, data):
         if(~self.moving):
             self.now_x_position = data.pose.pose.position.x
             self.now_y_position = data.pose.pose.position.y
-            print("Now_x",self.now_x_position)
-            print("Now_y",self.now_y_position)
+            # print("Now_x",self.now_x_position)
+            # print("Now_y",self.now_y_position)
             absolute_x = abs(self.goal_x_position - self.now_x_position)
             absolute_y = abs(self.goal_y_position - self.now_y_position)
             judge_x = self.Calculate_positive_or_negative(self.goal_x_position - self.now_x_position)
@@ -139,6 +143,7 @@ class agvs_parameter:
         else:
             pass
 
+#   Push angle of wheel.
     def Push_rotate(self, data):
         self.front_right_motor_wheel_pub.publish(data)
         self.front_left_motor_wheel_pub.publish(data)

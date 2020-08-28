@@ -1,3 +1,4 @@
 <launch>
+  <!-- Launch teleop -->
   <node name="agvs_teleop" pkg="agvs_teleop" type="agvs_teleop.py" output="screen"/>
 </launch>

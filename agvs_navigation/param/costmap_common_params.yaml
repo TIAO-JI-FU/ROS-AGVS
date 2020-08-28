@@ -7,6 +7,7 @@ obstacle_range: 6.0
 publish_voxel_map: true
 navigation_map:
   map_topic: /map
+# Scan setting
 obstacles:
   observation_sources: scan my_scan my_scan_2
   scan: 

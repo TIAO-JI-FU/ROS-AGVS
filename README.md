@@ -35,6 +35,8 @@ This folder is model of agv.
 This folder is slam, use gmapping.
 ### agvs_navigation
 This folder is navigation, we have to send goal.
+### agvs_teleop
+This folder is using keybord to control agv.
 ### agvs_control
 This folder is controller of agv.
 ### cmd_vel_transfer_to_agvs
@@ -56,6 +58,9 @@ This folder is mix two laser scan.
   4.Lanuch slam
   
     roslaunch agvs_slam agvs_slam.launch
+  5.Lanuch teleop
+
+    roslaunch agvs_teleop agvs_teleop.launch
 ### Navigation
   1.Lanuch model
   
